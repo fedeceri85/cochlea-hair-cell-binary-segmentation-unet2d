@@ -1,6 +1,6 @@
 # Cochlea Hair Cell Binary Segmentation U-Net 2D
 
-[Model weights on Hugging Face](https://huggingface.co/fedeceri/cochlea-hair-cell-binary-segmentation-unet2d)
+[![Hugging Face Model](https://img.shields.io/badge/🤗%20Hugging%20Face-Model-FFD21E)](https://huggingface.co/fedeceri/cochlea-hair-cell-binary-segmentation-UNET2d)
 
 
 Small MONAI/PyTorch pipeline for 2D binary segmentation of cochlear microscopy TIFF images.
