@@ -1,0 +1,9 @@
+cached_frames
+.venv/*
+*_Avg.tif
+*_Masks.tif
+*_Annotations.tif
+*checkpoints*
+./data/*
+__pycache__*
+huggingface*
