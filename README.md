@@ -1,9 +1,14 @@
-# MONAI Cochlear Binary Segmentation
+# Cochlea Hair Cell Binary Segmentation U-Net 2D
 
-Small MONAI/PyTorch project for 2D binary segmentation of cochlear microscopy TIFF images.
+[Model weights on Hugging Face](https://huggingface.co/fedeceri/cochlea-hair-cell-binary-segmentation-unet2d)
+
+
+Small MONAI/PyTorch pipeline for 2D binary segmentation of cochlear microscopy TIFF images.
 
 Input: single-channel `*_Avg.tif` image.  
 Output: binary foreground mask.
+
+
 
 ## Files
 
