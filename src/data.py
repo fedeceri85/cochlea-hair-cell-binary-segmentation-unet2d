@@ -10,7 +10,7 @@ MASKFILE = 'Masks.tif'
 ANNOTATIONFILE = 'Annotations.tif'
 
 
-def load_all_excels(folder='../experiment_lists', 
+def load_all_excels(folder='./experiment_lists', 
                     exclusions = ['ChAT', 'iAChSnFR', 'iGluSnFR', 'IHC recordings annotated', 'NeuroD', 'Pax2', 'SNAP25', 'Snap25','Cav','TMEM','Otof','FVB','Atoh1selected'],
                     drive = None
                     ):
@@ -256,6 +256,9 @@ def train_test_split(dfdata, column='UniqueID', test_size=0.2, random_state=42,
                     'image': avgfile,
                     'label': maskfile,
                     'annotation': annotationfile,
+                    "image_path": avgfile,
+                    "label_path": maskfile,
+                    "annotation_path": annotationfile,
                     'shape': avg.shape,
                     column: experiment_id
                 })

@@ -1,6 +1,6 @@
 # U-Net baseline with no augmentation.
 data:
-  excel_folder: ../experiment_lists
+  excel_folder: ./experiment_lists
   drive: /Volumes/data
   data_dir: data
   copy_type: local_no_copy

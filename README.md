@@ -3,10 +3,10 @@
 [![Hugging Face Model](https://img.shields.io/badge/🤗%20Hugging%20Face-Model-FFD21E)](https://huggingface.co/fedeceri/cochlea-hair-cell-binary-segmentation-UNET2d)
 
 
-Small MONAI/PyTorch pipeline for 2D binary segmentation of cochlear microscopy TIFF images.
+Small MONAI/PyTorch pipeline for 2D binary segmentation of cochlear microscopy TIFF images, with optional watershed post-processing to produce instance labels.
 
 Input: single-channel `*_Avg.tif` image.  
-Output: binary foreground mask.
+Output: binary foreground mask, or instance-label mask after watershed post-processing.
 
 
 
@@ -35,13 +35,19 @@ Training starts from scratch when `training.resume: false`. When `training.resum
 
 ## Inference
 
-The inference demo is designed for the Hugging Face release folder, where the script sits next to `config.yml` and `best_model.pth`.
+The inference demo is designed for the Hugging Face release folder, where the script sits next to `config.yml` and the packaged checkpoint named by `model.best_model_path`.
 
 ```bash
 python infer_binary.py input_Avg.tif --output prediction_mask.tif
 ```
 
 If `--output` is omitted, the script writes `<input>_prediction.tif`.
+
+To write watershed-separated instance labels:
+
+```bash
+python infer_binary.py input_Avg.tif --output-type labels --output prediction_labels.tif
+```
 
 ## Hugging Face
 
@@ -50,7 +56,7 @@ Only upload the selected best model to Hugging Face:
 ```text
 README.md
 infer_binary.py
-best_model.pth
+best_model_binary_v1.pth
 config.yml
 ```
 

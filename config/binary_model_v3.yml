@@ -1,6 +1,6 @@
 # Attention U-Net with all augmentation.
 data:
-  excel_folder: ../experiment_lists
+  excel_folder: ./experiment_lists
   drive: /Volumes/data
   data_dir: data
   copy_type: local_no_copy
@@ -32,7 +32,7 @@ augmentation:
   intensity_shift_offsets: 0.10
 
 training:
-  epochs: 200
+  epochs: 300
   batch_size: 2
   val_batch_size: 1
   num_workers: 0
