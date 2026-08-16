@@ -1,7 +1,7 @@
 import argparse
 import os
 import sys
-
+import pandas as pd
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
@@ -67,21 +67,25 @@ def main(config_path):
 
     print("Using device:", device)
     print("Using config:", config_path)
-
+    
     print("Loading data...")
-    alldata = data.load_all_excels(
-        folder=excel_folder,
-        drive=data_config["drive"],
-        exclusions=None if data_config.get("exclusions", None) == "None" else data_config.get("exclusions", None),
-        inclusions = None if data_config.get("inclusions", None) == "None" else data_config.get("inclusions", None)
-    )
-    print(data_config.get("require_annotations", True))
-    dfdata = data.generate_dataset(
-        alldata,
-        copy_type=data_config["copy_type"],
-        overwrite=data_config["overwrite"],
-        local_data_folder=data_dir,
-        require_annotations=data_config.get("require_annotations", True)
+    if data_config.get("load_local_dataset", False):
+        # If data is already downloaded and processed, load the dataset from a CSV file
+        dfdata = pd.read_csv(os.path.join(data_dir, 'dfdata.csv'))
+    else:
+        alldata = data.load_all_excels(
+            folder=excel_folder,
+            drive=data_config["drive"],
+            exclusions=None if data_config.get("exclusions", None) == "None" else data_config.get("exclusions", None),
+            inclusions = None if data_config.get("inclusions", None) == "None" else data_config.get("inclusions", None)
+        )
+        dfdata = data.generate_dataset(
+            alldata,
+            copy_type=data_config["copy_type"],
+            overwrite=data_config["overwrite"],
+            local_data_folder=data_dir,
+            require_annotations=data_config.get("require_annotations", True),
+            maskfilename=data_config.get("maskfilename", "Masks.tif")
     )
 
     print("Splitting data into training and validation sets...")

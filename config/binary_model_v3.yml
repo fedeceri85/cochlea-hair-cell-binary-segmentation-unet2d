@@ -3,6 +3,7 @@ data:
   excel_folder: ./experiment_lists
   drive: /Volumes/data
   data_dir: data
+  maskfilename: Masks.tif
   copy_type: local_no_copy
   overwrite: false
   split_file: splits/binary_split_v1.json
@@ -15,7 +16,8 @@ data:
   pos: 1
   neg: 1
   annotation_indices: [1]
-
+  load_local_dataset: false
+  
 augmentation:
   flip_vertical: true
   flip_vertical_prob: 0.5

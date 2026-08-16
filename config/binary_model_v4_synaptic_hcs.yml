@@ -3,6 +3,7 @@ data:
   excel_folder: ./experiment_lists
   drive: /Volumes/data
   data_dir: data_sgn_hcs
+  maskfilename: Masks.tif
   copy_type: local
   overwrite: false
   split_file: splits/binary_split_v4_synaptic_hcs.json

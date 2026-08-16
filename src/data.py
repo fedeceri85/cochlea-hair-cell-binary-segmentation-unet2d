@@ -57,7 +57,7 @@ def load_all_excels(folder='./experiment_lists',
 import subprocess
 import tqdm
 from shutil import copy2
-def generate_dataset(alldata,copy_type='local',overwrite=False,local_data_folder='data',require_annotations=True):
+def generate_dataset(alldata,copy_type='local',overwrite=False,local_data_folder='data',require_annotations=True,maskfilename = MASKFILE):
     # Crawl the folder and check that avg and masks exists, move them to the 'data' folder
     '''
     Generate a dataset by verifying the existence of average, mask, and annotation files for each entry in the provided DataFrame. The function can optionally copy these files to a local data folder, and it returns a new DataFrame containing the relevant file paths and metadata.
@@ -75,7 +75,7 @@ def generate_dataset(alldata,copy_type='local',overwrite=False,local_data_folder
         sanitised_folder = folder.split('/')[-2:]
         sanitised_folder = '_'.join(sanitised_folder)
         avgfile = os.path.join(folder, PROCFOLDER, AVGGFILE)
-        maskfile = os.path.join(folder, PROCFOLDER, MASKFILE)
+        maskfile = os.path.join(folder, PROCFOLDER, maskfilename)
         annotationfile = os.path.join(folder, PROCFOLDER, ANNOTATIONFILE)
 
         # Copy the files to the data folder
@@ -134,6 +134,7 @@ def generate_dataset(alldata,copy_type='local',overwrite=False,local_data_folder
                     continue
 
     dfdata = pd.DataFrame(dfdata)
+    dfdata.to_csv(os.path.join(local_data_folder, 'dfdata.csv'), index=False)
     #dfdata.set_index('Avgfile', inplace=True)
 
     return dfdata

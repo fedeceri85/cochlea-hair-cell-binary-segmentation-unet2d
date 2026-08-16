@@ -3,6 +3,7 @@ data:
   excel_folder: ./experiment_lists
   drive: /Volumes/data
   data_dir: data
+  maskfilename: Masks.tif
   copy_type: local
   overwrite: false
   split_file: splits/binary_split_v1.json
@@ -18,6 +19,7 @@ data:
   exclusions: ['ChAT', 'iAChSnFR', 'iGluSnFR', 'IHC recordings annotated', 'NeuroD', 'Pax2', 'SNAP25', 'Snap25','Cav','TMEM','Otof','FVB','Atoh1selected']
   inclusions: None
   require_annotations: true
+  load_local_dataset: false
 
 augmentation:
   flip_vertical: true
