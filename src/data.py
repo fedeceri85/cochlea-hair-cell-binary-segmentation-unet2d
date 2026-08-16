@@ -12,19 +12,30 @@ ANNOTATIONFILE = 'Annotations.tif'
 
 def load_all_excels(folder='./experiment_lists', 
                     exclusions = ['ChAT', 'iAChSnFR', 'iGluSnFR', 'IHC recordings annotated', 'NeuroD', 'Pax2', 'SNAP25', 'Snap25','Cav','TMEM','Otof','FVB','Atoh1selected'],
+                    inclusions = None,
                     drive = None
                     ):
     '''
     Load all excel files in the specified folder, excluding certain files based on forbidden keywords, and concatenate them into a single DataFrame. The function also processes the 'Folder' column to ensure consistent formatting and removes any rows marked for discard.
     '''
     dfs = []
+    if (exclusions is not None ) and  (inclusions is not None):
+        raise ValueError("Cannot specify both exclusions and inclusions. Please choose one.")
+    
     for file in os.listdir(folder):
         if file.endswith('.xlsx'):
             skip = False
-            for forbidden in exclusions:
-                if forbidden in file:
-                    skip = True
-                    break
+            if exclusions is not None:
+                for forbidden in exclusions:
+                    if forbidden in file:
+                        skip = True
+                        break
+            elif inclusions is not None:
+                skip = True
+                for allowed in inclusions:
+                    if allowed in file:
+                        skip = False
+                        break
             if not skip:
                 df = pd.read_excel(os.path.join(folder, file))
                 df['Source_file'] = file.strip('.xlsx')
@@ -46,7 +57,7 @@ def load_all_excels(folder='./experiment_lists',
 import subprocess
 import tqdm
 from shutil import copy2
-def generate_dataset(alldata,copy_type='local',overwrite=False,local_data_folder='data'):
+def generate_dataset(alldata,copy_type='local',overwrite=False,local_data_folder='data',require_annotations=True):
     # Crawl the folder and check that avg and masks exists, move them to the 'data' folder
     '''
     Generate a dataset by verifying the existence of average, mask, and annotation files for each entry in the provided DataFrame. The function can optionally copy these files to a local data folder, and it returns a new DataFrame containing the relevant file paths and metadata.
@@ -76,13 +87,14 @@ def generate_dataset(alldata,copy_type='local',overwrite=False,local_data_folder
                 if not os.path.exists(maskfile):
                     print(f"Masks file does not exist: {maskfile}")
                     continue
-                if not os.path.exists(annotationfile):
+                if require_annotations and not os.path.exists(annotationfile):
                     print(f"Annotation file does not exist: {annotationfile}")
                     continue
 
             new_avgfile = os.path.join(local_data_folder, f"{sanitised_folder}_Avg.tif")
             new_maskfile = os.path.join(local_data_folder, f"{sanitised_folder}_Masks.tif")
-            new_annotationfile = os.path.join(local_data_folder, f"{sanitised_folder}_Annotations.tif")
+            if require_annotations:
+                new_annotationfile = os.path.join(local_data_folder, f"{sanitised_folder}_Annotations.tif")
 
         elif copy_type == 'remote':
             new_avgfile = avgfile
@@ -98,6 +110,7 @@ def generate_dataset(alldata,copy_type='local',overwrite=False,local_data_folder
             'Folder': folder,
             'Avgfile': new_avgfile,
             'Maskfile': new_maskfile,
+            'Annotationfile': new_annotationfile if require_annotations else None
         })
         #copy the files
         if copy_type == 'local':
@@ -105,8 +118,9 @@ def generate_dataset(alldata,copy_type='local',overwrite=False,local_data_folder
                 copy2(avgfile, new_avgfile)
             if (not os.path.exists(new_maskfile)) or overwrite:
                 copy2(maskfile, new_maskfile)
-            if (not os.path.exists(new_annotationfile)) or overwrite:
-                copy2(annotationfile, new_annotationfile)
+            if require_annotations:
+                if (not os.path.exists(new_annotationfile)) or overwrite:
+                    copy2(annotationfile, new_annotationfile)
         elif copy_type == 'local_no_copy':
             if not os.path.exists(new_avgfile):
                 print(f"Avg file does not exist locally: {new_avgfile}")
@@ -114,9 +128,10 @@ def generate_dataset(alldata,copy_type='local',overwrite=False,local_data_folder
             if not os.path.exists(new_maskfile):
                 print(f"Masks file does not exist locally: {new_maskfile}")
                 continue
-            if not os.path.exists(new_annotationfile):
-                print(f"Annotation file does not exist locally: {new_annotationfile}")
-                continue
+            if require_annotations:
+                if not os.path.exists(new_annotationfile):
+                    print(f"Annotation file does not exist locally: {new_annotationfile}")
+                    continue
 
     dfdata = pd.DataFrame(dfdata)
     #dfdata.set_index('Avgfile', inplace=True)
@@ -217,7 +232,7 @@ def _get_experiment_id(dfdata, avgfile, column):
 
 def train_test_split(dfdata, column='UniqueID', test_size=0.2, random_state=42,
                      split_json_path=None, save_split_json=False,
-                     data_dir='data'):
+                     data_dir='data', require_annotations=True):
     '''
     Split the dataset into training and validation sets based on unique identifiers in the specified column. The function checks for the existence of average, mask, and annotation files, ensuring they have matching shapes before including them in the final dataset. It returns two lists of dictionaries representing the training and validation datasets.
     Parameters:
@@ -237,31 +252,39 @@ def train_test_split(dfdata, column='UniqueID', test_size=0.2, random_state=42,
         if file.endswith('_Avg.tif'):
             avgfile = os.path.join(data_dir, file)
             maskfile = os.path.join(data_dir, file.replace('_Avg.tif', '_Masks.tif'))
-            annotationfile = os.path.join(data_dir, file.replace('_Avg.tif', '_Annotations.tif'))
+            if require_annotations:
+                annotationfile = os.path.join(data_dir, file.replace('_Avg.tif', '_Annotations.tif'))
+            else:
+                annotationfile = None
             if os.path.exists(maskfile):
                 #check that the avg and mask have the same shape
                 avg = tifffile.imread(avgfile)
                 mask = tifffile.imread(maskfile)
-                annotation = tifffile.imread(annotationfile)
+                if require_annotations:
+                    annotation = tifffile.imread(annotationfile)
+                
                 if avg.shape != mask.shape:
                     print(f"Shape mismatch: {avgfile} and {maskfile}")
                     continue
-                if avg.shape != annotation.shape:
+                if require_annotations and (avg.shape != annotation.shape):
                     print(f"Shape mismatch: {avgfile} and {annotationfile}")
                     continue
 
                 experiment_id = _get_experiment_id(dfdata, avgfile, column)
 
-                data.append({
+                sample = {
                     'image': avgfile,
                     'label': maskfile,
-                    'annotation': annotationfile,
                     "image_path": avgfile,
                     "label_path": maskfile,
-                    "annotation_path": annotationfile,
                     'shape': avg.shape,
                     column: experiment_id
-                })
+                }
+                if require_annotations:
+                    sample['annotation'] = annotationfile
+                    sample["annotation_path"] = annotationfile
+
+                data.append(sample)
 
     data = pd.DataFrame(data)
     if data.empty:

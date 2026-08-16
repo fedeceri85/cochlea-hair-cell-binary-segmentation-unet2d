@@ -3,7 +3,7 @@ data:
   excel_folder: ./experiment_lists
   drive: /Volumes/data
   data_dir: data
-  copy_type: local_no_copy
+  copy_type: local
   overwrite: false
   split_file: splits/binary_split_v1.json
   save_split_json: true
@@ -15,6 +15,9 @@ data:
   pos: 1
   neg: 1
   annotation_indices: [1]
+  exclusions: ['ChAT', 'iAChSnFR', 'iGluSnFR', 'IHC recordings annotated', 'NeuroD', 'Pax2', 'SNAP25', 'Snap25','Cav','TMEM','Otof','FVB','Atoh1selected']
+  inclusions: None
+  require_annotations: true
 
 augmentation:
   flip_vertical: true
@@ -32,7 +35,7 @@ augmentation:
   intensity_shift_offsets: 0.10
 
 training:
-  epochs: 300
+  epochs: 301
   batch_size: 2
   val_batch_size: 1
   num_workers: 0

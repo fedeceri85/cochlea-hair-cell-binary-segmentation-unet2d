@@ -76,6 +76,7 @@ def get_transforms_binary_classification(
         spatial_size,
         pos,
         neg,
+        filter_by_annotation,
         annotation_indices,
         flip_vertical,
         flip_vertical_prob,
@@ -92,31 +93,35 @@ def get_transforms_binary_classification(
         intensity_shift_offsets,
 ):
     spatial_size = tuple(spatial_size)
+    if filter_by_annotation:
+        transforms_list = [
 
-    transforms_list = [
+            LoadTiffd(
+                keys=["image", "label", "annotation"]
+            ),
 
-        LoadTiffd(
-            keys=["image", "label", "annotation"]
-        ),
-
-        # Convert instance labels 0,1,2,3... -> binary 0/1
-        # Lambdad(
-        #     keys=["label"],
-        #     func=binarize_mask
-        # ),
-
-
-        FilterByAnnotationd(
-            mask_key="label",
-            annotation_key="annotation",
-            annotation_indices=annotation_indices
-        ),
-
+            FilterByAnnotationd(
+                mask_key="label",
+                annotation_key="annotation",
+                annotation_indices=annotation_indices
+            ),
         #Don't need annotations after this, remove it so we don't have to crop it 
-        DeleteItemsd(
+            DeleteItemsd(
             keys=["annotation"]
-
         ),
+        ]
+
+    else:
+        transforms_list = [
+
+            LoadTiffd(
+                keys=["image", "label"]
+            ),
+        ]
+
+
+
+    transforms_list.extend([
 
         BinarizeMaskd(
             keys=["label"]
@@ -153,7 +158,7 @@ def get_transforms_binary_classification(
         ),
 
         
-    ]
+    ])
 
     #Data augmentation
     if flip_vertical:
@@ -197,22 +202,23 @@ def get_transforms_binary_classification(
 
 
     # Transform for validation data. This does not have random crops. To account for the full image, we will use a sliding prediction
-    val_transforms = Compose([
-        LoadTiffd(keys=["image", "label", "annotation"]),
-        
-    
-
-        FilterByAnnotationd(
-            mask_key="label",
-            annotation_key="annotation",
-            annotation_indices=annotation_indices
-        ),
-        DeleteItemsd(
-
-            keys=["annotation"]
-
-        ),
-
+    if filter_by_annotation:
+        val_transforms_list = [
+            LoadTiffd(keys=["image", "label", "annotation"]),
+            FilterByAnnotationd(
+                mask_key="label",
+                annotation_key="annotation",
+                annotation_indices=annotation_indices
+            ),
+            DeleteItemsd(
+                keys=["annotation"]
+            ),
+        ]
+    else:
+        val_transforms_list = [
+            LoadTiffd(keys=["image", "label"]),
+        ]
+    val_transforms_list += [
         BinarizeMaskd(keys=["label"]),
 
         EnsureChannelFirstd(
@@ -226,6 +232,7 @@ def get_transforms_binary_classification(
             keys=["image", "label"],
             dtype=torch.float32
         ),
-    ])
+    ]
+    val_transforms = Compose(val_transforms_list)
 
     return train_transforms, val_transforms

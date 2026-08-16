@@ -36,14 +36,14 @@ def predict_binary(model, image, device, roi_size, sw_batch_size,
 
     return prediction
 
-
+from skimage.morphology import closing
 def binary_to_instance_labels(binary_mask, min_size=20, min_distance=5):
     # 1. Ensure boolean mask
     mask = binary_mask > 0
 
    # # 2. Optional cleanup
-    #mask = remove_small_objects(mask, min_size=min_size)
-
+    mask = remove_small_objects(mask, min_size=min_size)
+    mask = closing(mask)  # Fill small holes in the mask
     # 3. Distance transform: high values near object centers
     distance = ndi.distance_transform_edt(mask)
 

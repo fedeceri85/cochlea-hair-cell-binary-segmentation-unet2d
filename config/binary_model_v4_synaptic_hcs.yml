@@ -1,11 +1,11 @@
-# U-Net baseline with no augmentation.
+# U-Net with all augmentation.
 data:
   excel_folder: ./experiment_lists
   drive: /Volumes/data
-  data_dir: data
-  copy_type: local_no_copy
+  data_dir: data_sgn_hcs
+  copy_type: local
   overwrite: false
-  split_file: splits/binary_split_v1.json
+  split_file: splits/binary_split_v4_synaptic_hcs.json
   save_split_json: true
   column: UniqueID
   test_size: 0.2
@@ -15,24 +15,28 @@ data:
   pos: 1
   neg: 1
   annotation_indices: [1]
+  exclusions: None # ['ChAT', 'iAChSnFR', 'iGluSnFR', 'IHC recordings annotated', 'NeuroD_SGN_OHCs', 'Pax2', 'SNAP25', 'Snap25','Cav','TMEM','Otof','FVB','Atoh1selected']
+  inclusions: ['NeuroD', 'SNAP25','Snap25','iAChSnFR', 'iGluSnFR']
+  require_annotations: false
+  
 
 augmentation:
-  flip_vertical: false
+  flip_vertical: true
   flip_vertical_prob: 0.5
-  flip_horizontal: false
+  flip_horizontal: true
   flip_horizontal_prob: 0.5
-  rotate90: false
+  rotate90: true
   rotate90_prob: 0.5
   rotate90_max_k: 3
-  intensity_scale: false
+  intensity_scale: true
   intensity_scale_prob: 0.5
   intensity_scale_factors: 0.15
-  intensity_shift: false
+  intensity_shift: true
   intensity_shift_prob: 0.5
   intensity_shift_offsets: 0.10
 
 training:
-  epochs: 110
+  epochs: 400
   batch_size: 2
   val_batch_size: 1
   num_workers: 0
@@ -68,5 +72,5 @@ model:
   channels: [16, 32, 64, 128, 256]
   strides: [2, 2, 2, 2]
   num_res_units: 2
-  checkpoint_path: checkpoints/checkpoint_binary_v2.pth
-  best_model_path: checkpoints/best_model_binary_v2.pth
+  checkpoint_path: checkpoints/checkpoint_binary_v4_synaptic_hcs.pth
+  best_model_path: checkpoints/best_model_binary_v4_synaptic_hcs.pth

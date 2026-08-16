@@ -72,13 +72,16 @@ def main(config_path):
     alldata = data.load_all_excels(
         folder=excel_folder,
         drive=data_config["drive"],
+        exclusions=None if data_config.get("exclusions", None) == "None" else data_config.get("exclusions", None),
+        inclusions = None if data_config.get("inclusions", None) == "None" else data_config.get("inclusions", None)
     )
-
+    print(data_config.get("require_annotations", True))
     dfdata = data.generate_dataset(
         alldata,
         copy_type=data_config["copy_type"],
         overwrite=data_config["overwrite"],
         local_data_folder=data_dir,
+        require_annotations=data_config.get("require_annotations", True)
     )
 
     print("Splitting data into training and validation sets...")
@@ -90,6 +93,7 @@ def main(config_path):
         split_json_path=split_json_path,
         save_split_json=data_config["save_split_json"],
         data_dir=data_dir,
+        require_annotations=data_config.get("require_annotations", True)
     )
 
     train_transforms, val_transforms = transforms.get_transforms_binary_classification(
@@ -97,6 +101,7 @@ def main(config_path):
         spatial_size=tuple(data_config["patch_size"]),
         pos=data_config["pos"],
         neg=data_config["neg"],
+        filter_by_annotation=data_config.get("require_annotations", True),
         annotation_indices=data_config["annotation_indices"],
         flip_vertical=augmentation_config["flip_vertical"],
         flip_vertical_prob=augmentation_config["flip_vertical_prob"],
