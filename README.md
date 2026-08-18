@@ -1,7 +1,7 @@
 # Cochlea Inner Hair Cell Binary Segmentation U-Net 2D
 
-[![Hugging Face Model](https://img.shields.io/badge/🤗%20Hugging%20Face-Model-FFD21E)](https://huggingface.co/fedeceri/cochlea-hair-cell-binary-segmentation-UNET2d)
-
+[![Hugging Face: IHC model](https://img.shields.io/badge/🤗%20Hugging%20Face-IHC%20model-FFD21E)](https://huggingface.co/fedeceri/cochlea-hair-cell-binary-segmentation-UNET2d)
+[![Hugging Face: IHC afferent model](https://img.shields.io/badge/🤗%20Hugging%20Face-IHC%20afferent%20model-FFD21E)](https://huggingface.co/fedeceri/cochlea-hair-cell-synapses-binary-segmentation-unet2d)
 
 Small MONAI/PyTorch pipeline for 2D binary segmentation of cochlear microscopy TIFF images, with optional watershed post-processing to produce instance labels.
 The model is trained to segment fluorescently-labelled inner hair cells (mostly GCaMP6) in the neonatal cochlea from in-vivo 2-photon imaging experiments ([Paper](https://www.nature.com/articles/s41467-024-55519-w)). 
