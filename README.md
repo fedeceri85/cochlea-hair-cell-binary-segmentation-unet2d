@@ -8,8 +8,8 @@ The model is trained to segment fluorescently-labelled inner hair cells (mostly 
 The original segmentation was performed with [Cellpose](https://www.cellpose.org) and manually revised in napari.
 
 As a result, the algorithm performs better than Cellpose in ignoring cells different from inner hair cells, such as outer hair cells or supporting cells, and in "blurry" in-vivo experiments. 
-![Sample ROI result](docs/assets/sample_image.tif)
-![Sample ROI result](docs/assets/sample_image2.tif)
+![Sample ROI result](docs/assets/sample_image.png)
+![Sample ROI result](docs/assets/sample_image2.png)
 
 
 
