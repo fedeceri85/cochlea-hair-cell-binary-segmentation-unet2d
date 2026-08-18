@@ -13,6 +13,15 @@ As a result, the algorithm performs better than Cellpose in ignoring cells diffe
 
 
 
+A separate model was trained on images containing fluorescently-labelled inner hair cell afferent neurons to segment the inner hair cell body.
+
+
+![Sample ROI result](docs/assets/sample_image4.png)
+
+![Sample ROI result](docs/assets/sample_image3.png)
+
+
+
 Input: single-channel `*_Avg.tif` image.  
 Output: binary foreground mask, or instance-label mask after watershed post-processing.
 

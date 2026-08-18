@@ -4,7 +4,7 @@ data:
   drive: /Volumes/data
   data_dir: data_sgn_hcs
   maskfilename: Masks.tif
-  copy_type: local
+  copy_type: local_no_copy
   overwrite: false
   split_file: splits/binary_split_v4_synaptic_hcs.json
   save_split_json: true
